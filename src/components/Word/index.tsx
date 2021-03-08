@@ -46,8 +46,9 @@ const Word: React.FC<WordProps> = ({ word = 'defaultWord', onFinish, isStart, wo
   useEffect(() => {
     if (isFinish) {
       playHintSound()
-
-      onFinish()
+      setTimeout(() => {
+        onFinish()
+      }, 300)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFinish, hasWrong, playHintSound])
@@ -106,6 +107,7 @@ const Word: React.FC<WordProps> = ({ word = 'defaultWord', onFinish, isStart, wo
           />
         )
       })}
+      {isFinish ? <div className={style.heart}>&hearts;</div> : ''}
     </div>
   )
 }

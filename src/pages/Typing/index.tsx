@@ -17,6 +17,7 @@ import { useWordList } from './hooks/useWordList'
 import Layout from '../../components/Layout'
 import { NavLink } from 'react-router-dom'
 import usePronunciation from './hooks/usePronunciation'
+import useHello from './hooks/useHello'
 
 const App: React.FC = () => {
   const [order, setOrder] = useState<number>(0)
@@ -24,10 +25,17 @@ const App: React.FC = () => {
   const [inputCount, setInputCount] = useState<number>(0)
   const [correctCount, setCorrectCount] = useState<number>(0)
   const [isStart, setIsStart] = useState<boolean>(false)
+  const [index, setIndex] = useState<number>(0)
+  const [haveShown, setHaveShown] = useState<boolean>(false)
 
   const [switcherState, switcherStateDispatch] = useSwitcherState({ wordVisible: true, phonetic: false })
   const wordList = useWordList()
   const [pronunciation, pronunciationDispatch] = usePronunciation()
+  const [res] = useHello(index)
+
+  useEffect(() => {
+    setIndex(Math.floor(Math.random() * 100 + 1))
+  }, [])
 
   const {
     modalState,
@@ -45,6 +53,23 @@ const App: React.FC = () => {
     setMessage: setModalMessage,
     setHandler: setModalHandler,
   } = useModals(false, '提示')
+
+  useEffect(() => {
+    if (!haveShown) {
+      setModalState(true)
+      setModalMessage('欢迎徐徐！', res, '徐徐加油！', 'Day Day Up')
+      setModalHandler(
+        () => {
+          setModalState(false)
+          setHaveShown(true)
+        },
+        () => {
+          setModalState(false)
+          setHaveShown(true)
+        },
+      )
+    }
+  }, [setModalState, setModalMessage, res, setModalHandler, haveShown, setHaveShown])
 
   useHotkeys(
     'enter',
@@ -203,4 +228,4 @@ const App: React.FC = () => {
   )
 }
 
-export default App
+export default React.memo(App)
